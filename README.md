@@ -1,1 +1,1 @@
-#Firt coma of OSCP Notes
+#First coma of OSCP Notes
